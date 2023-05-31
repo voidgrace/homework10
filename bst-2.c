@@ -1,0 +1,420 @@
+/*
+ * Binary Search Tree #2
+ *
+ * Data Structures
+ *
+ * School of Computer Science
+ * at Chungbuk National University
+ *
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node {			//노드
+	int key;
+	struct node *left;
+	struct node *right;
+} Node;
+
+/* for stack */
+#define MAX_STACK_SIZE	20		//스택 max사이즈
+Node* stack[MAX_STACK_SIZE];	//스택(구조체 배열)
+int top = -1;					//탑 인덱스
+
+Node* pop();					//스택 pop함수
+void push(Node* aNode);			//스택 push함수
+
+/* for queue */
+#define MAX_QUEUE_SIZE	20		//큐 max사이즈
+Node* queue[MAX_QUEUE_SIZE];	//큐(구조체 배열)
+int front = -1;					//프론트
+int rear = -1;					//리어
+
+
+
+int initializeBST(Node** h);			//이진탐색트리 초기화
+void recursiveInorder(Node* ptr);	  /* recursive inorder traversal */
+int insert(Node* head, int key);      /* insert a node to the tree */
+int freeBST(Node* head); /* free all memories allocated to the tree */
+
+/* functions that you have to implement */
+void iterativeInorder(Node* ptr);     /* iterative inorder traversal */
+void levelOrder(Node* ptr);	          /* level order traversal */
+int deleteNode(Node* head, int key);  /* delete the node for the key */
+Node* pop();							//스택 팝
+void push(Node* aNode);					//스택 푸시
+Node* deQueue();						//큐 디큐
+void enQueue(Node* aNode);				//큐 인큐
+
+/* you may add your own defined functions if necessary */
+
+
+void printStack();						//스택 출력
+
+
+
+int main()
+{
+	char command;		//명령 커멘드 변수 
+	int key;			
+	Node* head = NULL;	//헤드 포인터 NULL
+
+	do{
+		printf("\n\n");
+		printf("------------------[ 2022041047  강은혜 ]-------------------------\n");
+		printf("----------------------------------------------------------------\n");
+		printf("                   Binary Search Tree #2                        \n");
+		printf("----------------------------------------------------------------\n");
+		printf(" Initialize BST       = z                                       \n");
+		printf(" Insert Node          = i      Delete Node                  = d \n");
+		printf(" Recursive Inorder    = r      Iterative Inorder (Stack)    = t \n");
+		printf(" Level Order (Queue)  = l      Quit                         = q \n");
+		printf("----------------------------------------------------------------\n");
+
+		printf("Command = ");
+		scanf(" %c", &command);
+
+		switch(command) {
+		case 'z': case 'Z':
+			initializeBST(&head);
+			break;
+		case 'q': case 'Q':
+			freeBST(head);
+			break;
+		case 'i': case 'I':
+			printf("Your Key = ");
+			scanf("%d", &key);
+			insert(head, key);
+			break;
+		case 'd': case 'D':
+			printf("Your Key = ");
+			scanf("%d", &key);
+			deleteNode(head, key);
+			break;
+
+		case 'r': case 'R':
+			recursiveInorder(head->left);
+			break;
+		case 't': case 'T':
+			iterativeInorder(head->left);
+			break;
+
+		case 'l': case 'L':
+			levelOrder(head->left);
+			break;
+
+		case 'p': case 'P':
+			printStack();
+			break;
+
+		default:
+			printf("\n       >>>>>   Concentration!!   <<<<<     \n");
+			break;
+		}
+
+	}while(command != 'q' && command != 'Q');
+
+	return 1;
+}
+
+int initializeBST(Node** h) {			//이진탐색트리 초기화
+
+	/* if the tree is not empty, then remove all allocated nodes from the tree*/
+	if(*h != NULL)
+		freeBST(*h);					//트리 삭제
+
+	/* create a head node */
+	*h = (Node*)malloc(sizeof(Node));	//헤드노드 할당
+	(*h)->left = NULL;	/* root */ 		//헤드노드의 왼쪽 NULL
+	(*h)->right = *h;					//헤드노드의 오른쪽 자기자신 가르킴
+	(*h)->key = -9999;					//키 초기화
+
+	top = -1;							//스택 탑 초기화
+
+	front = rear = -1;					//프론트&리어 초기화
+
+	return 1;
+}
+
+
+
+void recursiveInorder(Node* ptr)		//중위순회
+{
+	if(ptr) {							//
+		recursiveInorder(ptr->left);
+		printf(" [%d] ", ptr->key);
+		recursiveInorder(ptr->right);
+	}
+}
+
+/**
+ * textbook: p 224
+ */
+void iterativeInorder(Node* node)
+{
+	for(;;)
+	{
+		for(; node; node = node->left)
+			push(node);
+		node = pop();
+
+		if(!node) break;
+		printf(" [%d] ", node->key);
+
+		node = node->right;
+	}
+}
+
+/**
+ * textbook: p 225
+ */
+void levelOrder(Node* ptr)
+{
+	// int front = rear = -1;
+
+	if(!ptr) return; /* empty tree */
+
+	enQueue(ptr);
+
+	for(;;)
+	{
+		ptr = deQueue();
+		if(ptr) {
+			printf(" [%d] ", ptr->key);
+
+			if(ptr->left)
+				enQueue(ptr->left);
+			if(ptr->right)
+				enQueue(ptr->right);
+		}
+		else
+			break;
+
+	}
+
+}
+
+
+int insert(Node* head, int key)		//노드 삽입
+{
+	Node* newNode = (Node*)malloc(sizeof(Node));	//새로운노드 할당
+	//새노드 초기화
+	newNode->key = key;								
+	newNode->left = NULL;
+	newNode->right = NULL;
+
+	//헤드 이외의 첫노드라면 왼쪽에 노드 삽입
+	if (head->left == NULL) {
+		head->left = newNode;
+		return 1;
+	}
+
+
+	/* head->left is the root */
+	Node* ptr = head->left;
+
+	Node* parentNode = NULL;
+	while(ptr != NULL) {
+
+		/* if there is a node for the key, then just return */
+		//이미 같은키값을 가진 노드가 있다면 함수 끝 
+		if(ptr->key == key) return 1;
+
+		/* we have to move onto children nodes,
+		 * keep tracking the parent using parentNode */
+		//부모노드로 ptr 옮김
+		parentNode = ptr;
+
+		/* key comparison, if current node's key is greater than input key
+		 * then the new node has to be inserted into the right subtree;
+		 * otherwise the left subtree.
+		 */
+		//탐색한 키값이 새노드의 키값보다 작다면 오른쪽 서브트리에 삽입
+		if(ptr->key < key)
+			ptr = ptr->right;
+		else
+		// ... ... ... 크다면 왼쪽으로 삽입
+			ptr = ptr->left;
+	}
+
+	/* linking the new node to the parent */
+	//새로운 노드를 부모노드와 연결
+	if(parentNode->key > key)
+		parentNode->left = newNode;
+	else
+		parentNode->right = newNode;
+	return 1;
+}
+
+// 노드를 삭제하는 함수
+int deleteNode(Node* head, int key)
+{
+	Node *temp = head->left;
+	Node *temp2 = NULL;
+	Node *previous = head;
+	for (;;) {
+		if (temp == NULL || temp->key == key) {
+			// 반복하며 검사, temp가 NULL인 경우 temp->key값을 검사하면 오류가 발생함으로 temp==NULL부터 검사
+			// OR의 특성상 둘중 하나라도 참이면 참으로 해석하기 때문에 앞의 조건이 참일경우 뒤를 검사하지 않는 방식 이용
+			break;
+		}
+		previous = temp;
+		// 나중에 temp와의 연결을 끊기 위해 previous에 이동하기 건 temp의 위치 저장
+		if (temp->key > key) {
+			temp = temp->left;
+		}
+		else {
+			temp = temp->right;
+		}
+	}
+
+	if (temp == NULL) {
+		// 찾고자 하는 key값이 없는 경우
+		printf(" [%d] is not found", key);
+		return -1;
+	}
+	else {
+		if (temp->left == NULL && temp->right == NULL) {
+			// key값이 있는 노드에 자식노드가 없는 경우
+			if (previous->left == temp) {
+				// temp에 해당하는 노드를 찾아 연결 끊어주기
+				previous->left = NULL;
+			}
+			else {
+				previous->right = NULL;
+			}
+			free(temp);
+			return 0;
+		}
+		else {
+			temp2 = temp;
+			if (temp->right != NULL) {
+				// key값이 있는 노드에 자식노드가 있고, 그 자식노등의 rigth자식이 있는 경우
+				previous = NULL;
+				// 기존의 previous는 temp2 이전의 노드를 가리키고 있으므로 초기화
+				temp = temp->right;
+				for (; temp->left; previous = temp, temp = temp->left);
+				//temp의 left값중 가장 작은 값을 찾아서 이동
+				temp2->key = temp->key;
+				// key값 이동
+				if (previous != NULL) {
+					//temp에 left노드가 존재할 경우
+					previous->left = temp->right;
+				}
+				else {
+					// temp에 left 노드가 존제하지 않을 경우
+					temp2->right = temp->right;
+				}
+				temp->right = NULL;
+				free(temp);
+				return 0;
+			}
+			else {
+				// key값이 있는 노드에 자식노드가 있고, 그 자식노등의 left자식만 있는 경우
+				temp2 = temp;
+				previous = NULL;
+				// 기존의 previous는 temp2 이전의 노드를 가리키고 있으므로 초기화
+				temp = temp->left;
+				for (; temp->right; previous = temp, temp = temp->right);
+				//temp의 right값중 가장 작은 큰값을 찾아서 이동
+				temp2->key = temp->key;
+				// key값 이동
+				if (previous != NULL) {
+					//temp에 right노드가 존재할 경우
+					previous->right = temp->left;
+				}
+				else {
+					// temp에 right 노드가 존제하지 않을 경우
+					temp2->left = temp->left;
+				}
+				temp->left = NULL;
+				free(temp);
+				return 0;
+			}
+		}
+	}
+}
+
+//노드해제
+void freeNode(Node* ptr)		//노드 할당 해제
+{
+	if(ptr) { 					//헤드의 왼쪽노드가 비었다면
+		freeNode(ptr->left);	//끝 노드가 나올때까지 자식노드들 해제	//재귀함수
+		freeNode(ptr->right);	//루트노드가 나올때까지 오른쪽으로 해제		//재귀함수
+		free(ptr);				//ptr해제
+	}
+}
+
+int freeBST(Node* head)		//이진탐색트리 할당해제
+{
+
+	if(head->left == head)	//헤드의 왼쪽이 자신을 가리키고 있다면
+	{
+		free(head);//헤드 해제
+		return 1;
+	}
+
+	Node* p = head->left;	//헤드의 왼쪽노드
+
+	freeNode(p);			//노드해제
+
+	free(head);				//헤드해제
+	return 1;
+}
+
+
+//스택
+// stack에 있는 값을 반환하는 함수
+Node* pop()
+{
+	if (top < 0) return NULL;
+	return stack[top--];
+}
+//스택에 값을 집어 넣는 함수
+void push(Node* aNode)
+{
+	stack[++top] = aNode;
+}
+
+//스택 출력
+void printStack()
+{
+	int i = 0;
+	printf("--- stack ---\n");
+	while(i <= top)
+	{
+		printf("stack[%d] = %d\n", i, stack[i]->key);
+	}
+}
+
+//디큐
+Node* deQueue()
+{
+	if (front == rear) {
+		// printf("\n....Now Queue is empty!!\n" );
+		return NULL;
+	}
+	//큐가 비어있지 않다면 삭제
+	front = (front + 1) % MAX_QUEUE_SIZE;
+	return queue[front];
+
+}
+
+//인큐
+void enQueue(Node* aNode)
+{
+	rear = (rear + 1) % MAX_QUEUE_SIZE;
+	//큐가 다 차지 않았다면 삽입
+	if (front == rear) {
+		// printf("\n....Now Queue is full!!\n");
+		return;
+	}
+
+	queue[rear] = aNode;
+}
+
+
+
+
+
