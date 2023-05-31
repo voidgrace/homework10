@@ -11,29 +11,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct node {			//³ëµå
+typedef struct node {			//ë…¸ë“œ
 	int key;
 	struct node *left;
 	struct node *right;
 } Node;
 
 /* for stack */
-#define MAX_STACK_SIZE	20		//½ºÅÃ max»çÀÌÁî
-Node* stack[MAX_STACK_SIZE];	//½ºÅÃ(±¸Á¶Ã¼ ¹è¿­)
-int top = -1;					//Å¾ ÀÎµ¦½º
+#define MAX_STACK_SIZE	20		//ìŠ¤íƒ maxì‚¬ì´ì¦ˆ
+Node* stack[MAX_STACK_SIZE];	//ìŠ¤íƒ(êµ¬ì¡°ì²´ ë°°ì—´)
+int top = -1;					//íƒ‘ ì¸ë±ìŠ¤
 
-Node* pop();					//½ºÅÃ popÇÔ¼ö
-void push(Node* aNode);			//½ºÅÃ pushÇÔ¼ö
+Node* pop();					//ìŠ¤íƒ popí•¨ìˆ˜
+void push(Node* aNode);			//ìŠ¤íƒ pushí•¨ìˆ˜
 
 /* for queue */
-#define MAX_QUEUE_SIZE	20		//Å¥ max»çÀÌÁî
-Node* queue[MAX_QUEUE_SIZE];	//Å¥(±¸Á¶Ã¼ ¹è¿­)
-int front = -1;					//ÇÁ·ĞÆ®
-int rear = -1;					//¸®¾î
+#define MAX_QUEUE_SIZE	20		//í maxì‚¬ì´ì¦ˆ
+Node* queue[MAX_QUEUE_SIZE];	//í(êµ¬ì¡°ì²´ ë°°ì—´)
+int front = -1;					//í”„ë¡ íŠ¸
+int rear = -1;					//ë¦¬ì–´
 
 
 
-int initializeBST(Node** h);			//ÀÌÁøÅ½»öÆ®¸® ÃÊ±âÈ­
+int initializeBST(Node** h);			//ì´ì§„íƒìƒ‰íŠ¸ë¦¬ ì´ˆê¸°í™”
 void recursiveInorder(Node* ptr);	  /* recursive inorder traversal */
 int insert(Node* head, int key);      /* insert a node to the tree */
 int freeBST(Node* head); /* free all memories allocated to the tree */
@@ -42,27 +42,27 @@ int freeBST(Node* head); /* free all memories allocated to the tree */
 void iterativeInorder(Node* ptr);     /* iterative inorder traversal */
 void levelOrder(Node* ptr);	          /* level order traversal */
 int deleteNode(Node* head, int key);  /* delete the node for the key */
-Node* pop();							//½ºÅÃ ÆË
-void push(Node* aNode);					//½ºÅÃ Çª½Ã
-Node* deQueue();						//Å¥ µğÅ¥
-void enQueue(Node* aNode);				//Å¥ ÀÎÅ¥
+Node* pop();							//ìŠ¤íƒ íŒ
+void push(Node* aNode);					//ìŠ¤íƒ í‘¸ì‹œ
+Node* deQueue();						//í ë””í
+void enQueue(Node* aNode);				//í ì¸í
 
 /* you may add your own defined functions if necessary */
 
 
-void printStack();						//½ºÅÃ Ãâ·Â
+void printStack();						//ìŠ¤íƒ ì¶œë ¥
 
 
 
 int main()
 {
-	char command;		//¸í·É Ä¿¸àµå º¯¼ö 
+	char command;		//ëª…ë ¹ ì»¤ë©˜ë“œ ë³€ìˆ˜ 
 	int key;			
-	Node* head = NULL;	//Çìµå Æ÷ÀÎÅÍ NULL
+	Node* head = NULL;	//í—¤ë“œ í¬ì¸í„° NULL
 
 	do{
 		printf("\n\n");
-		printf("------------------[ 2022041047  °­ÀºÇı ]-------------------------\n");
+		printf("------------------[ 2022041047  ê°•ì€í˜œ ]-------------------------\n");
 		printf("----------------------------------------------------------------\n");
 		printf("                   Binary Search Tree #2                        \n");
 		printf("----------------------------------------------------------------\n");
@@ -118,33 +118,33 @@ int main()
 	return 1;
 }
 
-int initializeBST(Node** h) {			//ÀÌÁøÅ½»öÆ®¸® ÃÊ±âÈ­
+int initializeBST(Node** h) {			//ì´ì§„íƒìƒ‰íŠ¸ë¦¬ ì´ˆê¸°í™”
 
 	/* if the tree is not empty, then remove all allocated nodes from the tree*/
 	if(*h != NULL)
-		freeBST(*h);					//Æ®¸® »èÁ¦
+		freeBST(*h);					//íŠ¸ë¦¬ ì‚­ì œ
 
 	/* create a head node */
-	*h = (Node*)malloc(sizeof(Node));	//Çìµå³ëµå ÇÒ´ç
-	(*h)->left = NULL;	/* root */ 		//Çìµå³ëµåÀÇ ¿ŞÂÊ NULL
-	(*h)->right = *h;					//Çìµå³ëµåÀÇ ¿À¸¥ÂÊ ÀÚ±âÀÚ½Å °¡¸£Å´
-	(*h)->key = -9999;					//Å° ÃÊ±âÈ­
+	*h = (Node*)malloc(sizeof(Node));	//í—¤ë“œë…¸ë“œ í• ë‹¹
+	(*h)->left = NULL;	/* root */ 		//í—¤ë“œë…¸ë“œì˜ ì™¼ìª½ NULL
+	(*h)->right = *h;					//í—¤ë“œë…¸ë“œì˜ ì˜¤ë¥¸ìª½ ìê¸°ìì‹  ê°€ë¥´í‚´
+	(*h)->key = -9999;					//í‚¤ ì´ˆê¸°í™”
 
-	top = -1;							//½ºÅÃ Å¾ ÃÊ±âÈ­
+	top = -1;							//ìŠ¤íƒ íƒ‘ ì´ˆê¸°í™”
 
-	front = rear = -1;					//ÇÁ·ĞÆ®&¸®¾î ÃÊ±âÈ­
+	front = rear = -1;					//í”„ë¡ íŠ¸&ë¦¬ì–´ ì´ˆê¸°í™”
 
 	return 1;
 }
 
 
 
-void recursiveInorder(Node* ptr)		//ÁßÀ§¼øÈ¸
+void recursiveInorder(Node* ptr)		//ì¤‘ìœ„ìˆœíšŒ
 {
-	if(ptr) {							//
-		recursiveInorder(ptr->left);
-		printf(" [%d] ", ptr->key);
-		recursiveInorder(ptr->right);
+	if(ptr) {							//ptrì´NULLì•„ë‹ˆë¼ë©´
+		recursiveInorder(ptr->left);				//ì¬ê·€ì ìœ¼ë¡œ ì¤‘ìœ„ìˆœíšŒ_ìì‹ë…¸ë“œ
+		printf(" [%d] ", ptr->key);				//í‚¤ê°’ì¶œë ¥
+		recursiveInorder(ptr->right);				//ì¬ê·€ì ìœ¼ë¡œ ì¤‘ìœ„ìˆœíšŒ_ë¶€ëª¨ë…¸ë“œ
 	}
 }
 
@@ -196,15 +196,15 @@ void levelOrder(Node* ptr)
 }
 
 
-int insert(Node* head, int key)		//³ëµå »ğÀÔ
+int insert(Node* head, int key)		//ë…¸ë“œ ì‚½ì…
 {
-	Node* newNode = (Node*)malloc(sizeof(Node));	//»õ·Î¿î³ëµå ÇÒ´ç
-	//»õ³ëµå ÃÊ±âÈ­
+	Node* newNode = (Node*)malloc(sizeof(Node));	//ìƒˆë¡œìš´ë…¸ë“œ í• ë‹¹
+	//ìƒˆë…¸ë“œ ì´ˆê¸°í™”
 	newNode->key = key;								
 	newNode->left = NULL;
 	newNode->right = NULL;
 
-	//Çìµå ÀÌ¿ÜÀÇ Ã¹³ëµå¶ó¸é ¿ŞÂÊ¿¡ ³ëµå »ğÀÔ
+	//í—¤ë“œ ì´ì™¸ì˜ ì²«ë…¸ë“œë¼ë©´ ì™¼ìª½ì— ë…¸ë“œ ì‚½ì…
 	if (head->left == NULL) {
 		head->left = newNode;
 		return 1;
@@ -218,28 +218,28 @@ int insert(Node* head, int key)		//³ëµå »ğÀÔ
 	while(ptr != NULL) {
 
 		/* if there is a node for the key, then just return */
-		//ÀÌ¹Ì °°ÀºÅ°°ªÀ» °¡Áø ³ëµå°¡ ÀÖ´Ù¸é ÇÔ¼ö ³¡ 
+		//ì´ë¯¸ ê°™ì€í‚¤ê°’ì„ ê°€ì§„ ë…¸ë“œê°€ ìˆë‹¤ë©´ í•¨ìˆ˜ ë 
 		if(ptr->key == key) return 1;
 
 		/* we have to move onto children nodes,
 		 * keep tracking the parent using parentNode */
-		//ºÎ¸ğ³ëµå·Î ptr ¿Å±è
+		//ë¶€ëª¨ë…¸ë“œë¡œ ptr ì˜®ê¹€
 		parentNode = ptr;
 
 		/* key comparison, if current node's key is greater than input key
 		 * then the new node has to be inserted into the right subtree;
 		 * otherwise the left subtree.
 		 */
-		//Å½»öÇÑ Å°°ªÀÌ »õ³ëµåÀÇ Å°°ªº¸´Ù ÀÛ´Ù¸é ¿À¸¥ÂÊ ¼­ºêÆ®¸®¿¡ »ğÀÔ
+		//íƒìƒ‰í•œ í‚¤ê°’ì´ ìƒˆë…¸ë“œì˜ í‚¤ê°’ë³´ë‹¤ ì‘ë‹¤ë©´ ì˜¤ë¥¸ìª½ ì„œë¸ŒíŠ¸ë¦¬ì— ì‚½ì…
 		if(ptr->key < key)
 			ptr = ptr->right;
 		else
-		// ... ... ... Å©´Ù¸é ¿ŞÂÊÀ¸·Î »ğÀÔ
+		// ... ... ... í¬ë‹¤ë©´ ì™¼ìª½ìœ¼ë¡œ ì‚½ì…
 			ptr = ptr->left;
 	}
 
 	/* linking the new node to the parent */
-	//»õ·Î¿î ³ëµå¸¦ ºÎ¸ğ³ëµå¿Í ¿¬°á
+	//ìƒˆë¡œìš´ ë…¸ë“œë¥¼ ë¶€ëª¨ë…¸ë“œì™€ ì—°ê²°
 	if(parentNode->key > key)
 		parentNode->left = newNode;
 	else
@@ -247,7 +247,7 @@ int insert(Node* head, int key)		//³ëµå »ğÀÔ
 	return 1;
 }
 
-// ³ëµå¸¦ »èÁ¦ÇÏ´Â ÇÔ¼ö
+// ë…¸ë“œë¥¼ ì‚­ì œí•˜ëŠ” í•¨ìˆ˜
 int deleteNode(Node* head, int key)
 {
 	Node *temp = head->left;
@@ -255,12 +255,12 @@ int deleteNode(Node* head, int key)
 	Node *previous = head;
 	for (;;) {
 		if (temp == NULL || temp->key == key) {
-			// ¹İº¹ÇÏ¸ç °Ë»ç, temp°¡ NULLÀÎ °æ¿ì temp->key°ªÀ» °Ë»çÇÏ¸é ¿À·ù°¡ ¹ß»ıÇÔÀ¸·Î temp==NULLºÎÅÍ °Ë»ç
-			// ORÀÇ Æ¯¼º»ó µÑÁß ÇÏ³ª¶óµµ ÂüÀÌ¸é ÂüÀ¸·Î ÇØ¼®ÇÏ±â ¶§¹®¿¡ ¾ÕÀÇ Á¶°ÇÀÌ ÂüÀÏ°æ¿ì µÚ¸¦ °Ë»çÇÏÁö ¾Ê´Â ¹æ½Ä ÀÌ¿ë
+			// ë°˜ë³µí•˜ë©° ê²€ì‚¬, tempê°€ NULLì¸ ê²½ìš° temp->keyê°’ì„ ê²€ì‚¬í•˜ë©´ ì˜¤ë¥˜ê°€ ë°œìƒí•¨ìœ¼ë¡œ temp==NULLë¶€í„° ê²€ì‚¬
+			// ORì˜ íŠ¹ì„±ìƒ ë‘˜ì¤‘ í•˜ë‚˜ë¼ë„ ì°¸ì´ë©´ ì°¸ìœ¼ë¡œ í•´ì„í•˜ê¸° ë•Œë¬¸ì— ì•ì˜ ì¡°ê±´ì´ ì°¸ì¼ê²½ìš° ë’¤ë¥¼ ê²€ì‚¬í•˜ì§€ ì•ŠëŠ” ë°©ì‹ ì´ìš©
 			break;
 		}
 		previous = temp;
-		// ³ªÁß¿¡ temp¿ÍÀÇ ¿¬°áÀ» ²÷±â À§ÇØ previous¿¡ ÀÌµ¿ÇÏ±â °Ç tempÀÇ À§Ä¡ ÀúÀå
+		// ë‚˜ì¤‘ì— tempì™€ì˜ ì—°ê²°ì„ ëŠê¸° ìœ„í•´ previousì— ì´ë™í•˜ê¸° ê±´ tempì˜ ìœ„ì¹˜ ì €ì¥
 		if (temp->key > key) {
 			temp = temp->left;
 		}
@@ -270,15 +270,15 @@ int deleteNode(Node* head, int key)
 	}
 
 	if (temp == NULL) {
-		// Ã£°íÀÚ ÇÏ´Â key°ªÀÌ ¾ø´Â °æ¿ì
+		// ì°¾ê³ ì í•˜ëŠ” keyê°’ì´ ì—†ëŠ” ê²½ìš°
 		printf(" [%d] is not found", key);
 		return -1;
 	}
 	else {
 		if (temp->left == NULL && temp->right == NULL) {
-			// key°ªÀÌ ÀÖ´Â ³ëµå¿¡ ÀÚ½Ä³ëµå°¡ ¾ø´Â °æ¿ì
+			// keyê°’ì´ ìˆëŠ” ë…¸ë“œì— ìì‹ë…¸ë“œê°€ ì—†ëŠ” ê²½ìš°
 			if (previous->left == temp) {
-				// temp¿¡ ÇØ´çÇÏ´Â ³ëµå¸¦ Ã£¾Æ ¿¬°á ²÷¾îÁÖ±â
+				// tempì— í•´ë‹¹í•˜ëŠ” ë…¸ë“œë¥¼ ì°¾ì•„ ì—°ê²° ëŠì–´ì£¼ê¸°
 				previous->left = NULL;
 			}
 			else {
@@ -290,20 +290,20 @@ int deleteNode(Node* head, int key)
 		else {
 			temp2 = temp;
 			if (temp->right != NULL) {
-				// key°ªÀÌ ÀÖ´Â ³ëµå¿¡ ÀÚ½Ä³ëµå°¡ ÀÖ°í, ±× ÀÚ½Ä³ëµîÀÇ rigthÀÚ½ÄÀÌ ÀÖ´Â °æ¿ì
+				// keyê°’ì´ ìˆëŠ” ë…¸ë“œì— ìì‹ë…¸ë“œê°€ ìˆê³ , ê·¸ ìì‹ë…¸ë“±ì˜ rigthìì‹ì´ ìˆëŠ” ê²½ìš°
 				previous = NULL;
-				// ±âÁ¸ÀÇ previous´Â temp2 ÀÌÀüÀÇ ³ëµå¸¦ °¡¸®Å°°í ÀÖÀ¸¹Ç·Î ÃÊ±âÈ­
+				// ê¸°ì¡´ì˜ previousëŠ” temp2 ì´ì „ì˜ ë…¸ë“œë¥¼ ê°€ë¦¬í‚¤ê³  ìˆìœ¼ë¯€ë¡œ ì´ˆê¸°í™”
 				temp = temp->right;
 				for (; temp->left; previous = temp, temp = temp->left);
-				//tempÀÇ left°ªÁß °¡Àå ÀÛÀº °ªÀ» Ã£¾Æ¼­ ÀÌµ¿
+				//tempì˜ leftê°’ì¤‘ ê°€ì¥ ì‘ì€ ê°’ì„ ì°¾ì•„ì„œ ì´ë™
 				temp2->key = temp->key;
-				// key°ª ÀÌµ¿
+				// keyê°’ ì´ë™
 				if (previous != NULL) {
-					//temp¿¡ left³ëµå°¡ Á¸ÀçÇÒ °æ¿ì
+					//tempì— leftë…¸ë“œê°€ ì¡´ì¬í•  ê²½ìš°
 					previous->left = temp->right;
 				}
 				else {
-					// temp¿¡ left ³ëµå°¡ Á¸Á¦ÇÏÁö ¾ÊÀ» °æ¿ì
+					// tempì— left ë…¸ë“œê°€ ì¡´ì œí•˜ì§€ ì•Šì„ ê²½ìš°
 					temp2->right = temp->right;
 				}
 				temp->right = NULL;
@@ -311,21 +311,21 @@ int deleteNode(Node* head, int key)
 				return 0;
 			}
 			else {
-				// key°ªÀÌ ÀÖ´Â ³ëµå¿¡ ÀÚ½Ä³ëµå°¡ ÀÖ°í, ±× ÀÚ½Ä³ëµîÀÇ leftÀÚ½Ä¸¸ ÀÖ´Â °æ¿ì
+				// keyê°’ì´ ìˆëŠ” ë…¸ë“œì— ìì‹ë…¸ë“œê°€ ìˆê³ , ê·¸ ìì‹ë…¸ë“±ì˜ leftìì‹ë§Œ ìˆëŠ” ê²½ìš°
 				temp2 = temp;
 				previous = NULL;
-				// ±âÁ¸ÀÇ previous´Â temp2 ÀÌÀüÀÇ ³ëµå¸¦ °¡¸®Å°°í ÀÖÀ¸¹Ç·Î ÃÊ±âÈ­
+				// ê¸°ì¡´ì˜ previousëŠ” temp2 ì´ì „ì˜ ë…¸ë“œë¥¼ ê°€ë¦¬í‚¤ê³  ìˆìœ¼ë¯€ë¡œ ì´ˆê¸°í™”
 				temp = temp->left;
 				for (; temp->right; previous = temp, temp = temp->right);
-				//tempÀÇ right°ªÁß °¡Àå ÀÛÀº Å«°ªÀ» Ã£¾Æ¼­ ÀÌµ¿
+				//tempì˜ rightê°’ì¤‘ ê°€ì¥ ì‘ì€ í°ê°’ì„ ì°¾ì•„ì„œ ì´ë™
 				temp2->key = temp->key;
-				// key°ª ÀÌµ¿
+				// keyê°’ ì´ë™
 				if (previous != NULL) {
-					//temp¿¡ right³ëµå°¡ Á¸ÀçÇÒ °æ¿ì
+					//tempì— rightë…¸ë“œê°€ ì¡´ì¬í•  ê²½ìš°
 					previous->right = temp->left;
 				}
 				else {
-					// temp¿¡ right ³ëµå°¡ Á¸Á¦ÇÏÁö ¾ÊÀ» °æ¿ì
+					// tempì— right ë…¸ë“œê°€ ì¡´ì œí•˜ì§€ ì•Šì„ ê²½ìš°
 					temp2->left = temp->left;
 				}
 				temp->left = NULL;
@@ -336,48 +336,48 @@ int deleteNode(Node* head, int key)
 	}
 }
 
-//³ëµåÇØÁ¦
-void freeNode(Node* ptr)		//³ëµå ÇÒ´ç ÇØÁ¦
+//ë…¸ë“œí•´ì œ
+void freeNode(Node* ptr)		//ë…¸ë“œ í• ë‹¹ í•´ì œ
 {
-	if(ptr) { 					//ÇìµåÀÇ ¿ŞÂÊ³ëµå°¡ ºñ¾ú´Ù¸é
-		freeNode(ptr->left);	//³¡ ³ëµå°¡ ³ª¿Ã¶§±îÁö ÀÚ½Ä³ëµåµé ÇØÁ¦	//Àç±ÍÇÔ¼ö
-		freeNode(ptr->right);	//·çÆ®³ëµå°¡ ³ª¿Ã¶§±îÁö ¿À¸¥ÂÊÀ¸·Î ÇØÁ¦		//Àç±ÍÇÔ¼ö
-		free(ptr);				//ptrÇØÁ¦
+	if(ptr) { 					//í—¤ë“œì˜ ì™¼ìª½ë…¸ë“œê°€ ë¹„ì—ˆë‹¤ë©´
+		freeNode(ptr->left);	//ë ë…¸ë“œê°€ ë‚˜ì˜¬ë•Œê¹Œì§€ ìì‹ë…¸ë“œë“¤ í•´ì œ	//ì¬ê·€í•¨ìˆ˜
+		freeNode(ptr->right);	//ë£¨íŠ¸ë…¸ë“œê°€ ë‚˜ì˜¬ë•Œê¹Œì§€ ì˜¤ë¥¸ìª½ìœ¼ë¡œ í•´ì œ		//ì¬ê·€í•¨ìˆ˜
+		free(ptr);				//ptrí•´ì œ
 	}
 }
 
-int freeBST(Node* head)		//ÀÌÁøÅ½»öÆ®¸® ÇÒ´çÇØÁ¦
+int freeBST(Node* head)		//ì´ì§„íƒìƒ‰íŠ¸ë¦¬ í• ë‹¹í•´ì œ
 {
 
-	if(head->left == head)	//ÇìµåÀÇ ¿ŞÂÊÀÌ ÀÚ½ÅÀ» °¡¸®Å°°í ÀÖ´Ù¸é
+	if(head->left == head)	//í—¤ë“œì˜ ì™¼ìª½ì´ ìì‹ ì„ ê°€ë¦¬í‚¤ê³  ìˆë‹¤ë©´
 	{
-		free(head);//Çìµå ÇØÁ¦
+		free(head);//í—¤ë“œ í•´ì œ
 		return 1;
 	}
 
-	Node* p = head->left;	//ÇìµåÀÇ ¿ŞÂÊ³ëµå
+	Node* p = head->left;	//í—¤ë“œì˜ ì™¼ìª½ë…¸ë“œ
 
-	freeNode(p);			//³ëµåÇØÁ¦
+	freeNode(p);			//ë…¸ë“œí•´ì œ
 
-	free(head);				//ÇìµåÇØÁ¦
+	free(head);				//í—¤ë“œí•´ì œ
 	return 1;
 }
 
 
-//½ºÅÃ
-// stack¿¡ ÀÖ´Â °ªÀ» ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+//ìŠ¤íƒ
+// stackì— ìˆëŠ” ê°’ì„ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
 Node* pop()
 {
 	if (top < 0) return NULL;
 	return stack[top--];
 }
-//½ºÅÃ¿¡ °ªÀ» Áı¾î ³Ö´Â ÇÔ¼ö
+//ìŠ¤íƒì— ê°’ì„ ì§‘ì–´ ë„£ëŠ” í•¨ìˆ˜
 void push(Node* aNode)
 {
 	stack[++top] = aNode;
 }
 
-//½ºÅÃ Ãâ·Â
+//ìŠ¤íƒ ì¶œë ¥
 void printStack()
 {
 	int i = 0;
@@ -388,24 +388,24 @@ void printStack()
 	}
 }
 
-//µğÅ¥
+//ë””í
 Node* deQueue()
 {
 	if (front == rear) {
 		// printf("\n....Now Queue is empty!!\n" );
 		return NULL;
 	}
-	//Å¥°¡ ºñ¾îÀÖÁö ¾Ê´Ù¸é »èÁ¦
+	//íê°€ ë¹„ì–´ìˆì§€ ì•Šë‹¤ë©´ ì‚­ì œ
 	front = (front + 1) % MAX_QUEUE_SIZE;
 	return queue[front];
 
 }
 
-//ÀÎÅ¥
+//ì¸í
 void enQueue(Node* aNode)
 {
 	rear = (rear + 1) % MAX_QUEUE_SIZE;
-	//Å¥°¡ ´Ù Â÷Áö ¾Ê¾Ò´Ù¸é »ğÀÔ
+	//íê°€ ë‹¤ ì°¨ì§€ ì•Šì•˜ë‹¤ë©´ ì‚½ì…
 	if (front == rear) {
 		// printf("\n....Now Queue is full!!\n");
 		return;
