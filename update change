@@ -139,7 +139,7 @@ int initializeBST(Node** h) {			//이진탐색트리 초기화
 
 
 
-void recursiveInorder(Node* ptr)		//중위순회
+void recursiveInorder(Node* ptr)		//재귀적방식으로 중위 탐색
 {
 	if(ptr) {							//ptr이NULL아니라면
 		recursiveInorder(ptr->left);				//재귀적으로 중위순회_자식노드
@@ -151,49 +151,59 @@ void recursiveInorder(Node* ptr)		//중위순회
 /**
  * textbook: p 224
  */
+//반복적 방식으로 
 void iterativeInorder(Node* node)
 {
-	for(;;)
-	{
-		for(; node; node = node->left)
+	for (;;) {
+		// 무한반복
+		for (; node; node = node->left) {
+			// node의 왼쪽부터 탐색해야 함으로 일단 왼쪽부터 탐색
 			push(node);
+			// stack에 node의 주소 저장
+		}
 		node = pop();
+		// 왼쪽에 대한 탐색이 다 끝났으면 pop()
 
-		if(!node) break;
+		if (node == NULL) break;
+		// 만약 top이 -1인경우 NULL을 반환하며, 이는 곧 스택이 비었다는 뜻이므로 종료
+
 		printf(" [%d] ", node->key);
-
+		// node의 data 값 출력
 		node = node->right;
+		// node의 오른쪽으로 이동
 	}
 }
+
 
 /**
  * textbook: p 225
  */
+
+ // 반복적 방식으로 ㅇ노드의 래밸순 출력
 void levelOrder(Node* ptr)
 {
-	// int front = rear = -1;
-
-	if(!ptr) return; /* empty tree */
-
+	front = 0;
+	rear = 0;
+	// 원형 큐에선 front가 가리키는 값을 공백으로 두어 이를 이용해
+	// 가득찬 상태와 비어있는 상태를 구분함으로 0으로 초기화
 	enQueue(ptr);
-
-	for(;;)
-	{
-		ptr = deQueue();
-		if(ptr) {
-			printf(" [%d] ", ptr->key);
-
-			if(ptr->left)
-				enQueue(ptr->left);
-			if(ptr->right)
-				enQueue(ptr->right);
+	// 초기값을 삽입후
+	for (;;) {
+		ptr = deQueue(ptr);
+		// stack에 있는 값을 가져온다
+		if (!ptr) break;
+		// 그값이 NULL이 아니라면
+		printf(" [%d] ", ptr->key);
+		// 출력후 자식노드 삽입
+		if (ptr->left != NULL) {
+			enQueue(ptr->left);
 		}
-		else
-			break;
-
+		if (ptr->right != NULL) {
+			enQueue(ptr->right);
+		}
 	}
-
 }
+
 
 
 int insert(Node* head, int key)		//노드 삽입
